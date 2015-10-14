@@ -1,0 +1,22 @@
+form {
+    margin:2rem;
+}
+
+input {
+    display: block;
+    width: 100%;
+    padding:1rem 0;
+    text-indent: 1rem;
+    margin:2rem 0;
+    background-color: var(--stark-white);
+    border:0;
+    border-radius: 0.3rem;
+}
+
+form input.error {
+    border: 2px solid var(--alert);
+}
+
+form footer {
+    margin:2rem 0;
+}

@@ -1,0 +1,26 @@
+.button.hollow {
+    background-color: transparent;
+    border:2px solid var(--white);
+    color: var(--white);
+    display: inline-block;
+    width: auto;
+    text-indent: 0;
+    padding:0 2rem;
+    line-height: 4rem;
+    margin:0;
+    text-transform: uppercase;
+}
+
+.button.hollow:hover {
+    color: var(--stark-white);
+    border:2px solid var(--stark-white);
+    transition: all 0.2s;
+}
+
+.button[disabled] {
+    opacity: 0.5;
+}
+
+.button + .button {
+    margin-left: 1rem;
+}
