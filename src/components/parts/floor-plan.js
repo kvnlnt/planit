@@ -6,29 +6,55 @@ module.exports = React.createClass({
         return {
             currentRoom: 'Kitchen',
             dragging: false,
-            rooms:[
-                {
-                    name: 'Kitchen',
-                    width: 5,
-                    height: 5,
-                    left:20,
-                    top:170
-                },
-                {
-                    name: 'Living Room',
-                    width: 10,
-                    height: 20,
-                    left: 75,
-                    top:170
-                },
-                {
-                    name: 'Dining Room',
-                    width: 10,
-                    height: 20,
-                    left: 180,
-                    top: 170 
-                }
-            ]
+            rooms:[{
+                "name": "Kitchen",
+                "width": 14,
+                "height": 14,
+                "left": 430,
+                "top": 173
+            }, {
+                "name": "Master Bedroom",
+                "width": 17,
+                "height": 17,
+                "left": 573,
+                "top": 173
+            }, {
+                "name": "Living Room",
+                "width": 15,
+                "height": 15,
+                "left": 419,
+                "top": 316
+            }, {
+                "name": "Dining Room",
+                "width": 14,
+                "height": 14,
+                "left": 574,
+                "top": 347
+            }, {
+                "name": "Bedroom 1",
+                "width": 12,
+                "height": 12,
+                "left": 174,
+                "top": 277
+            }, {
+                "name": "Bedroom 2",
+                "width": 12,
+                "height": 12,
+                "left": 297,
+                "top": 277
+            }, {
+                "name": "Laundry Room",
+                "width": 10,
+                "height": 10,
+                "left": 328,
+                "top": 172.5
+            }, {
+                "name": "Bathroom",
+                "width": 12,
+                "height": 12,
+                "left": 296,
+                "top": 399
+            }]
         }
     },
     componentDidUpdate: function(prevProps, prevState) {
@@ -110,18 +136,14 @@ module.exports = React.createClass({
                 <div>
                 SQFT: {this.state.rooms.reduce(function(prev, curr){ return prev + (curr.width*curr.height)}, 0)}</div>
                 WIDTH: <select ref="width" data-dimension="width" onChange={that.handleChange}>
-                    <option>5</option>
-                    <option>10</option>
-                    <option>15</option>
-                    <option>20</option>
-                    <option>25</option>
+                {[...Array(30)].map((x, i) =>
+                    <option>{i}</option>
+                  )}
                 </select> &nbsp;
                 HEIGHT: <select ref="height" data-dimension="height" onChange={that.handleChange}>
-                    <option>5</option>
-                    <option>10</option>
-                    <option>15</option>
-                    <option>20</option>
-                    <option>25</option>
+                    {[...Array(31)].map((x, i) =>
+                    <option>{i}</option>
+                  )}
                 </select>
                 <hr/>
                 {this.state.rooms.map(function(room){
