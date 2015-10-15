@@ -6,6 +6,7 @@ module.exports = React.createClass({
         return {
             currentRoom: 'Kitchen',
             dragging: false,
+            zIndex:1,
             rooms:[{
                 "name": "Kitchen",
                 "width": 20,
@@ -124,6 +125,13 @@ module.exports = React.createClass({
             currentRoom: null
         });
     },
+    handlePreselector: function(e){
+        e.preventDefault();
+        var rooms = React.findDOMNode(this.refs.preselector).value;
+        this.setState({
+            rooms: JSON.parse(rooms)
+        });
+    },
     handleChange: function (e) {
         e.preventDefault();
         if(null === this.state.currentRoom) return;
@@ -154,12 +162,16 @@ module.exports = React.createClass({
     },
     startDrag: function(e){
         e.preventDefault();
+        if(true === this.state.dragging) return;
+        var newZ = this.state.zIndex + 1;
         var room = this.getRoomByName(e.currentTarget.dataset.room);
+        e.currentTarget.style.zIndex = newZ;
         React.findDOMNode(this.refs.width).value = room.width;
         React.findDOMNode(this.refs.height).value = room.height;
         this.setState({
             currentRoom: e.currentTarget.dataset.room,
-            dragging: true
+            dragging: true,
+            zIndex: newZ
         });
     },
     stopDrag: function(e){
@@ -191,6 +203,11 @@ module.exports = React.createClass({
                 <button onClick={that.createRoom} ref="create" className="createRoom">New</button>
                 &nbsp;
                 <button onClick={that.deleteRoom} ref="delete" className="deleteRoom">Delete</button>
+                &nbsp;
+                <select ref="preselector" onChange={this.handlePreselector}>
+                    <option value='[{"name":"Kitchen","width":20,"height":11,"left":420,"top":215},{"name":"Master Bedroom","width":20,"height":15,"left":621,"top":266},{"name":"Living Room","width":10,"height":20,"left":419,"top":326},{"name":"Dining Room","width":10,"height":20,"left":520,"top":326},{"name":"Bedroom 1","width":10,"height":14,"left":177,"top":337},{"name":"Bedroom 2","width":14,"height":11,"left":279,"top":425},{"name":"Laundry Room","width":14,"height":7,"left":279,"top":215.5},{"name":"Bathroom","width":14,"height":10,"left":278,"top":288},{"name":"Hallway","width":14,"height":4,"left":280,"top":386.5}]'>Hemmi</option>
+                    <option value='[{"name":"Kitchen","width":20,"height":11,"left":420,"top":215},{"name":"Master Bedroom","width":20,"height":15,"left":128,"top":215},{"name":"Living Room","width":17,"height":12,"left":329,"top":326},{"name":"Dining Room","width":15,"height":12,"left":501,"top":326},{"name":"Bedroom 1","width":10,"height":15,"left":651,"top":326},{"name":"Bedroom 2","width":14,"height":11,"left":188,"top":366},{"name":"Laundry Room","width":9,"height":11,"left":329,"top":215},{"name":"Bathroom","width":13,"height":11,"left":621,"top":214.5}]'>long</option>
+                </select>
                 <hr/>
                 {this.state.rooms.map(function(room){
                     return (
@@ -199,7 +216,6 @@ module.exports = React.createClass({
                             onMouseMove={that.watchMouse}
                             onMouseDown={that.startDrag}
                             onMouseUp={that.stopDrag}
-                            onBlur={that.handleBlur}
                             data-room={room.name}
                             className={that.state.currentRoom === room.name ? "room active" : "room"} style={
                             {
