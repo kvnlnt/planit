@@ -4,32 +4,61 @@ var React = require('react');
 module.exports = React.createClass({
     getInitialState: function() {
         return {
-            active: 'Kitchen',
+            currentRoom: 'Kitchen',
             dragging: false,
             rooms:[
                 {
                     name: 'Kitchen',
                     width: 5,
                     height: 5,
-                    left:0,
-                    top:100
+                    left:20,
+                    top:170
                 },
                 {
                     name: 'Living Room',
                     width: 10,
                     height: 20,
-                    left: 50,
-                    top:100
+                    left: 75,
+                    top:170
                 },
                 {
                     name: 'Dining Room',
                     width: 10,
                     height: 20,
-                    left: 150,
-                    top: 100 
+                    left: 180,
+                    top: 170 
                 }
             ]
         }
+    },
+    componentDidUpdate: function(prevProps, prevState) {
+        React.findDOMNode(this.refs.state).value = JSON.stringify(this.state);
+    },
+    updateState: function(){
+        var state = JSON.parse(React.findDOMNode(this.refs.state).value);
+        this.setState(state); 
+    },
+    handleChange: function (e) {
+        e.preventDefault();
+        var that = this;
+        var dimension = e.target.dataset.dimension;
+        var room = this.state.rooms.filter(function(room){
+            return room.name === that.state.currentRoom;
+        })[0];
+        var index = this.state.rooms.map(function(room){
+            return room.name;
+        }).indexOf(room.name);
+        var val = parseInt(e.target.value);
+        var rooms = this.state.rooms;
+        if(dimension === "width"){
+            rooms[index].width = val;
+        } else {
+            rooms[index].height = val;
+        }
+        this.setState({
+            rooms:rooms
+        });
+        
     },
     watchMouse: function(e){
 
@@ -50,8 +79,6 @@ module.exports = React.createClass({
         rooms[index].left = e.clientX  - e.target.offsetWidth/2;
         rooms[index].top = e.clientY - e.target.offsetHeight/2;
 
-        console.log(e.clientX, e.clientY, e.target.offsetWidth, e.target.offsetHeight);
-
         // update states
         this.setState({
             rooms: rooms
@@ -60,8 +87,13 @@ module.exports = React.createClass({
     },
     startDrag: function(e){
         e.preventDefault();
+        var room = this.state.rooms.filter(function(room){
+            return room.name === e.currentTarget.dataset.room;
+        })[0];
+        React.findDOMNode(this.refs.width).value = room.width;
+        React.findDOMNode(this.refs.height).value = room.height;
         this.setState({
-            active: e.currentTarget.dataset.room,
+            currentRoom: e.currentTarget.dataset.room,
             dragging: true
         });
     },
@@ -75,6 +107,23 @@ module.exports = React.createClass({
         var that = this;
         return (
             <div ref="FloorPlan" className="floor-plan">
+                <div>
+                SQFT: {this.state.rooms.reduce(function(prev, curr){ return prev + (curr.width*curr.height)}, 0)}</div>
+                WIDTH: <select ref="width" data-dimension="width" onChange={that.handleChange}>
+                    <option>5</option>
+                    <option>10</option>
+                    <option>15</option>
+                    <option>20</option>
+                    <option>25</option>
+                </select> &nbsp;
+                HEIGHT: <select ref="height" data-dimension="height" onChange={that.handleChange}>
+                    <option>5</option>
+                    <option>10</option>
+                    <option>15</option>
+                    <option>20</option>
+                    <option>25</option>
+                </select>
+                <hr/>
                 {this.state.rooms.map(function(room){
                     return (
                         <div key={room.name}
@@ -83,7 +132,7 @@ module.exports = React.createClass({
                             onMouseDown={that.startDrag}
                             onMouseUp={that.stopDrag}
                             data-room={room.name}
-                            className={that.state.active === room.name ? "room active" : "room"} style={
+                            className={that.state.currentRoom === room.name ? "room active" : "room"} style={
                             {
                                 width:room.width*10,
                                 height:room.height*10,
@@ -96,6 +145,10 @@ module.exports = React.createClass({
                         </div>
                     )
                 })}
+                <textarea ref="state">
+                    {JSON.stringify(this.state)}
+                </textarea>
+                <button onClick={that.updateState} className="stateUpdater" ref="updateState">update</button>
             </div>
         );
     }
